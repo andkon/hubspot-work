@@ -65,14 +65,14 @@
 
       this.anims.create({
         key: 'left',
-        frames: this.anims.generateFrameNumbers('player', { start: 0, end: 3}),
+        frames: this.anims.generateFrameNumbers('player', { start: 0, end: 2}),
         frameRate: 10,
         repeat: -1
       });
 
       this.anims.create({
         key: 'right',
-        frames: this.anims.generateFrameNumbers('player', {start: 0, end: 3}),
+        frames: this.anims.generateFrameNumbers('player', {start: 0, end: 2}),
         frameRate: 10,
         repeat: -1
       });
@@ -85,7 +85,7 @@
 
       this.anims.create({
         key: 'down',
-        frames: this.anims.generateFrameNumbers('player', {start: 9, end: 11}),
+        frames: this.anims.generateFrameNumbers('player', {start: 8, end: 10}),
         frameRate: 10,
         repeat: -1
       });
@@ -104,13 +104,22 @@
     function update ()
     {
       if (cursors.left.isDown) {
-        player.setVelocityX(-160);
-        player.setFlipX(true);
+        player.setVelocityX(-160, 0);
+        player.setFlipX(false);
         player.anims.play('left', true);
       } else if (cursors.right.isDown) {
-        player.setVelocityX(160);
-        player.setFlipX(false);
+        player.setVelocity(160, 0);
+        player.setFlipX(true);
         player.anims.play('right', true);
+      } else if (cursors.up.isDown) {
+        player.setVelocity(0, -160);
+        player.anims.play('up', true);
+      } else if (cursors.down.isDown) {
+        player.setVelocity(0, 160);
+        player.anims.play('down', true);
+      } else {
+        player.setVelocity(0, 0);
+        player.anims.pause();
       }
     }
 
