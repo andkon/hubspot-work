@@ -32,6 +32,8 @@
         }
     };
 
+    var player;
+
     var game = new Phaser.Game(config);
 
     function preload ()
@@ -46,13 +48,17 @@
       this.load.image('eelC', 'assets/EelC.png');
       this.load.image('eelD', 'assets/EelD.png');
       this.load.image('worm', 'assets/WormG.png');
+      this.load.image('tile', 'assets/tile.png');
 
       this.load.spritesheet('player', 'assets/hero.png', { frameWidth: 16, frameHeight: 24});
     }
 
     function create ()
     {
+      var background = this.add.tileSprite(400, 300, 800, 600, "tile");
+
       this.add.image(400, 300, 'ground').setScale(2);
+
     }
 
     function update ()
