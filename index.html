@@ -22,7 +22,7 @@
           default: 'arcade',
           arcade: {
             gravity: { y: 0 },
-            debug: false
+            debug: true
           }
         },
         scene: {
@@ -35,6 +35,8 @@
     var player;
     var cursors;
     var pond;
+    var pondGroup;
+    var fishingZone;
 
     var game = new Phaser.Game(config);
 
@@ -63,14 +65,18 @@
 
       this.add.image(400, 300, 'ground').setScale(2);
 
-      // create collider for the pond
-      pond = this.physics.add.staticGroup();
-      pond.create(390, 420, 'pond').setScale(2).refreshBody();
-
       player = this.physics.add.sprite(100, 450, 'player');
       player.setCollideWorldBounds(true);
+      player.setBodySize(10, 18, true);
 
-      this.physics.add.collider(player, pond);
+      // create pond
+      pondGroup = this.physics.add.staticGroup();
+
+      pond = pondGroup.create(390, 420, 'pond').setScale(2).refreshBody();
+      fishingZone = this.add.zone(390, 420, pond.width + 2, pond.height + 2).setScale(2);
+      this.physics.world.enable(fishingZone);
+
+      this.physics.add.collider(player, pondGroup);
 
       this.anims.create({
         key: 'left',
@@ -115,25 +121,38 @@
     {
       if (cursors.left.isDown) {
         player.setVelocityX(-160, 0);
+
         player.setFlipX(false);
         player.anims.play('left', true);
       } else if (cursors.right.isDown) {
         player.setVelocity(160, 0);
+
         player.setFlipX(true);
         player.anims.play('right', true);
       } else if (cursors.up.isDown) {
         player.setVelocity(0, -160);
+
         player.anims.play('up', true);
       } else if (cursors.down.isDown) {
         player.setVelocity(0, 160);
+
         player.anims.play('down', true);
-      } else if (cursors.space.isDown) {
+      } else if (cursors.space.isDown && (this.physics.world.overlap(fishingZone, player, checkNear))) {
+        console.log("Okay");
         player.setVelocity(0, 0);
+
         player.anims.play('cast', true);
       } else {
         player.setVelocity(0, 0);
+
         player.anims.pause();
       }
+
+    }
+
+    function checkNear (chkObject)
+    {
+      console.log(chkObject, 'is near');
     }
 
 </script>
