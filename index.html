@@ -22,7 +22,7 @@
           default: 'arcade',
           arcade: {
             gravity: { y: 0 },
-            debug: true
+            debug: false
           }
         },
         scene: {
@@ -37,6 +37,8 @@
     var pond;
     var pondGroup;
     var fishingZone;
+    var isFishing = false;
+    var spaceDown = false;
 
     var game = new Phaser.Game(config);
 
@@ -44,7 +46,6 @@
     {
       // `this` refers not to the game object - but the scene!
       this.load.image('ground', 'assets/atlas.png');
-      this.load.image('pond', 'assets/pond.png');
 
       this.load.image('fishA', 'assets/FishA.png');
       this.load.image('fishB', 'assets/FishB.png');
@@ -57,6 +58,7 @@
       this.load.image('tile', 'assets/tile.png');
 
       this.load.spritesheet('player', 'assets/hero.png', { frameWidth: 16, frameHeight: 24});
+      this.load.spritesheet('pond', 'assets/pond.png', { frameWidth: 54, frameHeight: 39});
     }
 
     function create ()
@@ -67,27 +69,20 @@
 
       player = this.physics.add.sprite(100, 450, 'player');
       player.setCollideWorldBounds(true);
-      player.setBodySize(10, 18, true);
+      // player.setBodySize(10, 18, true);
 
       // create pond
       pondGroup = this.physics.add.staticGroup();
 
-      pond = pondGroup.create(390, 420, 'pond').setScale(2).refreshBody();
-      fishingZone = this.add.zone(390, 420, pond.width + 2, pond.height + 2).setScale(2);
+      pond = pondGroup.create(390, 420, 'pond', 0).setScale(2).refreshBody();
+      fishingZone = this.add.zone(pond.x, pond.y, pond.width + 2, pond.height + 2).setScale(2);
       this.physics.world.enable(fishingZone);
 
       this.physics.add.collider(player, pondGroup);
 
       this.anims.create({
-        key: 'left',
+        key: 'sideways',
         frames: this.anims.generateFrameNumbers('player', { start: 0, end: 2}),
-        frameRate: 10,
-        repeat: -1
-      });
-
-      this.anims.create({
-        key: 'right',
-        frames: this.anims.generateFrameNumbers('player', {start: 0, end: 2}),
         frameRate: 10,
         repeat: -1
       });
@@ -95,7 +90,8 @@
       this.anims.create({
         key: 'cast',
         frames: [ {key: 'player', frame: 3}],
-        frameRate: 20
+        frameRate: 20,
+        repeat: -1
       });
 
       this.anims.create({
@@ -112,8 +108,24 @@
         repeat: -1
       });
 
+      // pond animation
+      this.anims.create({
+        key: 'pondFishing',
+        frames: this.anims.generateFrameNumbers('pond', {start: 1, end: 2}),
+        frameRate: 1,
+        repeat: -1
+      });
+
+      this.anims.create({
+        key: 'pondStill',
+        frames: [ {key: 'pond', frame: 0}],
+        frameRate: 20,
+        repeat: -1
+      });
+
       // input events
       cursors = this.input.keyboard.createCursorKeys();
+      cursors.space.emitOnRepeat = false;
 
     }
 
@@ -123,12 +135,12 @@
         player.setVelocityX(-160, 0);
 
         player.setFlipX(false);
-        player.anims.play('left', true);
+        player.anims.play('sideways', true);
       } else if (cursors.right.isDown) {
         player.setVelocity(160, 0);
 
         player.setFlipX(true);
-        player.anims.play('right', true);
+        player.anims.play('sideways', true);
       } else if (cursors.up.isDown) {
         player.setVelocity(0, -160);
 
@@ -137,12 +149,29 @@
         player.setVelocity(0, 160);
 
         player.anims.play('down', true);
-      } else if (cursors.space.isDown && (this.physics.world.overlap(fishingZone, player, checkNear))) {
-        console.log("Okay");
-        player.setVelocity(0, 0);
+      } else if (cursors.space.isDown && (this.physics.world.overlap(player, fishingZone, nearFishing)) && spaceDown === false) {
+        spaceDown = true;
 
-        player.anims.play('cast', true);
+        if (isFishing === true) {
+          console.log("not fishing");
+          player.anims.play('sideways', true);
+          pond.anims.play('pondStill', true);
+
+          isFishing = false;
+        } else {
+          console.log("Fishing")
+          player.anims.play('cast', true);
+          pond.anims.play('pondFishing');
+
+          isFishing = true;
+        }
+      } else if (cursors.space.isUp) {
+        // has released the spacebar
+        player.setVelocity(0, 0);
+        spaceDown = false;
+        player.anims.pause();
       } else {
+        // if the above keys are being pressed, the user shouldn't be moving
         player.setVelocity(0, 0);
 
         player.anims.pause();
@@ -150,9 +179,9 @@
 
     }
 
-    function checkNear (chkObject)
+    function nearFishing (chkObject)
     {
-      console.log(chkObject, 'is near');
+
     }
 
 </script>
