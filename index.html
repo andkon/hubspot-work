@@ -22,7 +22,7 @@
           default: 'arcade',
           arcade: {
             gravity: { y: 0 },
-            debug: false
+            debug: true
           }
         },
         scene: {
@@ -35,9 +35,12 @@
     var player;
     var cursors;
     var pond;
+    var pondDwellers = [];
     var pondGroup;
     var fishingZone;
     var spaceDown = false;
+
+    var fishes;
 
     var game = new Phaser.Game(config);
 
@@ -46,15 +49,17 @@
       // `this` refers not to the game object - but the scene!
       this.load.image('ground', 'assets/atlas.png');
 
-      this.load.image('fishA', 'assets/FishA.png');
-      this.load.image('fishB', 'assets/FishB.png');
-      this.load.image('fishC', 'assets/FishC.png');
-      this.load.image('eelA', 'assets/EelA.png');
-      this.load.image('eelB', 'assets/EelB.png');
-      this.load.image('eelC', 'assets/EelC.png');
-      this.load.image('eelD', 'assets/EelD.png');
-      this.load.image('worm', 'assets/WormG.png');
-      this.load.image('tile', 'assets/tile.png');
+      this.load.spritesheet('fishA', 'assets/FishA.png', { frameWidth: 16, frameHeight: 16});
+      this.load.spritesheet('fishB', 'assets/FishB.png', { frameWidth: 16, frameHeight: 16});
+      this.load.spritesheet('fishC', 'assets/FishC.png', { frameWidth: 16, frameHeight: 16});
+      this.load.spritesheet('eelA', 'assets/EelA.png', { frameWidth: 16, frameHeight: 16});
+      this.load.spritesheet('eelB', 'assets/EelB.png', { frameWidth: 16, frameHeight: 16});
+      this.load.spritesheet('eelC', 'assets/EelC.png', { frameWidth: 16, frameHeight: 16});
+      this.load.spritesheet('eelD', 'assets/EelD.png', { frameWidth: 16, frameHeight: 16});
+      this.load.spritesheet('worm', 'assets/WormG.png', { frameWidth: 16, frameHeight: 16});
+      this.load.spritesheet('tile', 'assets/tile.png', { frameWidth: 16, frameHeight: 16});
+
+      pondDwellers.push('fishA','fishB','fishC','eelA','eelB','eelC','eelD','worm');
 
       this.load.spritesheet('player', 'assets/hero.png', { frameWidth: 16, frameHeight: 24});
       this.load.spritesheet('pond', 'assets/pond.png', { frameWidth: 54, frameHeight: 39});
@@ -66,7 +71,7 @@
 
       this.add.image(400, 300, 'ground').setScale(2);
 
-      player = this.physics.add.sprite(100, 450, 'player');
+      player = this.physics.add.sprite(100, 450, 'player').setScale(2).refreshBody();
       player.setCollideWorldBounds(true);
       // player.setBodySize(10, 18, true);
 
@@ -137,6 +142,8 @@
         repeat: 4
       });
 
+      fishes = this.physics.add.staticGroup();
+
       // input events
       cursors = this.input.keyboard.createCursorKeys();
       cursors.space.emitOnRepeat = false;
@@ -173,13 +180,29 @@
             // there's a catchable fish
 
             // first, create a fish object
-            
+            fish = fishes.create(pond.getCenter().x, pond.getCenter().y, pondDwellers[Math.floor(Math.random() * pondDwellers.length)], 4).setOrigin(0.5, 0.5).setScale(3).refreshBody();
+            console.log(pondDwellers);
             // put it right at the center of the pond
             // then animate it up to the top of the player's body
+            var tween = this.tweens.add({
+              targets: fish,
+              x: player.getTopCenter().x,
+              y: player.getTopCenter().y,
+              ease: 'Linear',
+              completeDelay: 1000,
+              onComplete: function () {
+                // POST new fish here
+                fish.destroy();
+              }
+            });
 
-            // and when that's complete (animationcomplete), play the caughtFish animation
+            // now we'll show the player celebrate
             player.anims.play('caughtFish', true);
+            player.state = "normal";
 
+            // we'll clear the pond's animation chain and reset everything
+            pond.anims.stop();
+            pond.anims.play('pondStill');
           } else {
             // just stop fishing
             player.anims.play('sideways', true);
@@ -195,6 +218,7 @@
           pond.anims.play('pondFishing');
           pond.anims.stopAfterDelay(Phaser.Math.Between(2000,4000)); // random
 
+          console.log(pond.anims.nextAnimsQueue);
           pond.anims.chain('pondTug');
           pond.on('animationcomplete-pondTug', finishedFishing);
           pond.anims.chain('pondFishing');
