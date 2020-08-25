@@ -1,0 +1,16 @@
+{
+  "global" : false,
+  "smart_type" : "NOT_SMART",
+  "host_template_types" : [ "PAGE" ],
+  "module_id" : 33954766793,
+  "other_assets" : [ {
+    "url" : "https://f.hubspotusercontent20.net/hubfs/8311725/atlas.png",
+    "autoload" : false,
+    "name" : "atlas.png"
+  }, {
+    "url" : "https://f.hubspotusercontent20.net/hubfs/8311725/assets/FishA.png",
+    "autoload" : false,
+    "name" : "FishA.png"
+  } ],
+  "is_available_for_new_content" : false
+}
