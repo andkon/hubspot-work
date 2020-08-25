@@ -14,6 +14,13 @@ var game = new Phaser.Game(config);
 function preload ()
 {
 	// this gets called once at the very beginning when `game` is instantiated
+  this.load.image('ground', 'https://f.hubspotusercontent20.net/hubfs/1234567/assets/atlas.png');
+	this.load.spritesheet('pond', 'https://f.hubspotusercontent20.net/hubfs/1234567/assets/pond.png', { frameWidth: 54, frameHeight: 39});
+	this.load.spritesheet('tile', 'https://f.hubspotusercontent20.net/hubfs/1234567/assets/tile.png', { frameWidth: 16, frameHeight: 16});
+
+	this.load.spritesheet('fishA', 'https://f.hubspotusercontent20.net/hubfs/1234567/assets/FishA.png', { frameWidth: 16, frameHeight: 16});
+
+	this.load.spritesheet('player', 'https://f.hubspotusercontent20.net/hubfs/1234567/assets/hero.png', { frameWidth: 16, frameHeight: 24});
 }
 
 function create ()
