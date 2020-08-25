@@ -27,6 +27,8 @@ function create ()
 {
 	// this gets called once, after `preload` is finished
 	// anything loaded in `preload` is guaranteed to be accessible here
+  this.add.image(400, 300, 'ground').setScale(2);
+  
 }
 
 function update ()
