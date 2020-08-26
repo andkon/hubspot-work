@@ -53,6 +53,8 @@ function create ()
   player = this.physics.add.sprite(100, 450, 'player').setScale(2).refreshBody();
   player.setCollideWorldBounds(true);
 
+  this.physics.add.collider(player, pondGroup);
+
   this.anims.create({
     key: 'sideways',
     frames: this.anims.generateFrameNumbers('player', { start: 0, end: 2}),
