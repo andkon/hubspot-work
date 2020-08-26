@@ -18,6 +18,7 @@ var config = {
 
 var pond;
 var pondGroup;
+var player;
 
 var game = new Phaser.Game(config);
 
@@ -45,6 +46,45 @@ function create ()
   pondGroup = this.physics.add.staticGroup();
 
   pond = pondGroup.create(390, 420, 'pond', 0).setScale(2).refreshBody();
+
+  // create player
+  player = this.physics.add.sprite(100, 450, 'player').setScale(2).refreshBody();
+  player.setCollideWorldBounds(true);
+
+  this.anims.create({
+    key: 'sideways',
+    frames: this.anims.generateFrameNumbers('player', { start: 0, end: 2}),
+    frameRate: 10,
+    repeat: -1
+  });
+
+  this.anims.create({
+    key: 'down',
+    frames: this.anims.generateFrameNumbers('player', {start: 8, end: 10}),
+    frameRate: 10,
+    repeat: -1
+  });
+
+  this.anims.create({
+    key: 'cast',
+    frames: [ {key: 'player', frame: 3}],
+    frameRate: 20,
+    repeat: -1
+  });
+
+  this.anims.create({
+    key: 'up',
+    frames: this.anims.generateFrameNumbers('player', {start: 4, end: 6}),
+    frameRate: 10,
+    repeat: -1
+  });
+
+  this.anims.create({
+    key: 'caughtFish',
+    frames: [{key: 'player', frame: 13}],
+    frameRate: 20,
+    repeat: -1
+  });
 
 }
 
