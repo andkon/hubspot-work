@@ -6,7 +6,7 @@ var config = {
       default: 'arcade',
       arcade: {
         gravity: { y: 0 },
-        debug: true
+        debug: false
       }
     },
     scene: {
@@ -19,6 +19,8 @@ var config = {
 var pond;
 var pondGroup;
 var player;
+
+var cursors;
 
 var game = new Phaser.Game(config);
 
@@ -86,9 +88,33 @@ function create ()
     repeat: -1
   });
 
+  cursors = this.input.keyboard.createCursorKeys();
 }
 
 function update ()
 {
-	// the game loop calls `update` constantly
+  if (cursors.up.isDown) {
+    player.setVelocity(0, -160);
+
+    player.anims.play('up', true);
+  } else if (cursors.down.isDown) {
+    player.setVelocity(0, 160);
+
+    player.anims.play('down', true);
+  } else if (cursors.left.isDown) {
+    player.setVelocity(-160, 0);
+
+    player.setFlipX(false);
+    player.anims.play('sideways', true);
+  } else if (cursors.right.isDown) {
+    player.setVelocity(160, 0);
+
+    player.setFlipX(true);
+    player.anims.play('sideways', true);
+  } else {
+    // if the above keys are being pressed, the user shouldn't be moving
+    player.setVelocity(0, 0);
+
+    player.anims.pause();
+  }
 }
