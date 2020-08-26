@@ -2,12 +2,22 @@ var config = {
     type: Phaser.AUTO,
     width: 800,
     height: 600,
+    physics: {
+      default: 'arcade',
+      arcade: {
+        gravity: { y: 0 },
+        debug: true
+      }
+    },
     scene: {
         preload: preload,
         create: create,
         update: update
     }
 };
+
+var pond;
+var pondGroup;
 
 var game = new Phaser.Game(config);
 
@@ -30,6 +40,12 @@ function create ()
   this.add.tileSprite(400, 300, 800, 600, "tile");
 
   this.add.image(400, 300, 'ground').setScale(2);
+
+  // create pond
+  pondGroup = this.physics.add.staticGroup();
+
+  pond = pondGroup.create(390, 420, 'pond', 0).setScale(2).refreshBody();
+
 }
 
 function update ()
