@@ -111,7 +111,7 @@ function create ()
   });
 
   this.anims.create({
-    key: 'pondTug',
+    key: 'pondBite',
     frames: this.anims.generateFrameNumbers('pond', {start: 3, end: 4}),
     frameRate: 5,
     repeat: 4
@@ -143,6 +143,24 @@ function update ()
   } else if (cursors.space.isDown && (this.physics.world.overlap(player, fishingZone)) && spacebarHeld === false) {
     spacebarHeld = true;
     console.log("Fishing!")
+
+    if (player.state === "fishing") {
+      // The player is currently fishing
+
+    } else {
+      // The player should begin fishing!
+      player.anims.play('cast', true);
+
+      pond.anims.play('pondFishing');
+      pond.anims.stopAfterDelay(Phaser.Math.Between(2000,4000));
+
+      pond.anims.chain('pondBite');
+      pond.on('animationcomplete-pondBite', finishedFishing);
+      pond.anims.chain('pondFishing');
+
+      player.state = "fishing";
+    }
+
   } else if (cursors.space.isUp) {
     player.setVelocity(0, 0);
     spacebarHeld = false;
@@ -152,5 +170,19 @@ function update ()
     player.setVelocity(0, 0);
 
     player.anims.pause();
+  }
+}
+
+function finishedFishing (animation, frame, gameObject)
+{
+  if (player.state === 'fishing') {
+    // stop the current animation
+    pond.anims.stopAfterDelay(Phaser.Math.Between(2000,4000)); // random
+
+    // add a new animation
+    pond.anims.chain('pondTug');
+    pond.on('animationcomplete-pondTug', finishedFishing);
+    pond.anims.chain('pondFishing');
+
   }
 }
