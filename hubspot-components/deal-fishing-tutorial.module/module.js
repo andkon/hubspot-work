@@ -95,6 +95,28 @@ function create ()
     repeat: -1
   });
 
+  // pond animation
+  this.anims.create({
+    key: 'pondFishing',
+    frames: this.anims.generateFrameNumbers('pond', {start: 1, end: 2}),
+    frameRate: 1,
+    repeat: -1
+  });
+
+  this.anims.create({
+    key: 'pondStill',
+    frames: [ {key: 'pond', frame: 0}],
+    frameRate: 20,
+    repeat: -1
+  });
+
+  this.anims.create({
+    key: 'pondTug',
+    frames: this.anims.generateFrameNumbers('pond', {start: 3, end: 4}),
+    frameRate: 5,
+    repeat: 4
+  });
+
   cursors = this.input.keyboard.createCursorKeys();
 }
 
@@ -122,7 +144,9 @@ function update ()
     spacebarHeld = true;
     console.log("Fishing!")
   } else if (cursors.space.isUp) {
+    player.setVelocity(0, 0);
     spacebarHeld = false;
+    player.anims.pause();
   } else {
     // if the above keys are being pressed, the user shouldn't be moving
     player.setVelocity(0, 0);
