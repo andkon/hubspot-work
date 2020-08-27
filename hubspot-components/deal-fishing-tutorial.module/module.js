@@ -19,8 +19,10 @@ var config = {
 var pond;
 var pondGroup;
 var player;
+var fishingZone;
 
 var cursors;
+var spacebarHeld = false;
 
 var game = new Phaser.Game(config);
 
@@ -54,6 +56,9 @@ function create ()
   player.setCollideWorldBounds(true);
 
   this.physics.add.collider(player, pondGroup);
+
+  fishingZone = this.add.zone(pond.x, pond.y, pond.width + 2, pond.height).setScale(2);
+  this.physics.world.enable(fishingZone);
 
   this.anims.create({
     key: 'sideways',
@@ -113,6 +118,11 @@ function update ()
 
     player.setFlipX(true);
     player.anims.play('sideways', true);
+  } else if (cursors.space.isDown && (this.physics.world.overlap(player, fishingZone)) && spacebarHeld === false) {
+    spacebarHeld = true;
+    console.log("Fishing!")
+  } else if (cursors.space.isUp) {
+    spacebarHeld = false;
   } else {
     // if the above keys are being pressed, the user shouldn't be moving
     player.setVelocity(0, 0);
