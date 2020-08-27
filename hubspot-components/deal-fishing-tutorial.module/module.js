@@ -122,39 +122,83 @@ function create ()
 
 function update ()
 {
-  if (cursors.up.isDown) {
-    player.setVelocity(0, -160);
+  if (player.state != "fishing") {
+    // movement is allowed
+    if (cursors.up.isDown) {
+      player.setVelocity(0, -160);
 
-    player.anims.play('up', true);
-  } else if (cursors.down.isDown) {
-    player.setVelocity(0, 160);
+      player.anims.play('up', true);
+    } else if (cursors.down.isDown) {
+      player.setVelocity(0, 160);
 
-    player.anims.play('down', true);
-  } else if (cursors.left.isDown) {
-    player.setVelocity(-160, 0);
+      player.anims.play('down', true);
+    } else if (cursors.left.isDown) {
+      player.setVelocity(-160, 0);
 
-    player.setFlipX(false);
-    player.anims.play('sideways', true);
-  } else if (cursors.right.isDown) {
-    player.setVelocity(160, 0);
+      player.setFlipX(false);
+      player.anims.play('sideways', true);
+    } else if (cursors.right.isDown) {
+      player.setVelocity(160, 0);
 
-    player.setFlipX(true);
-    player.anims.play('sideways', true);
-  } else if (cursors.space.isDown && (this.physics.world.overlap(player, fishingZone)) && spacebarHeld === false) {
+      player.setFlipX(true);
+      player.anims.play('sideways', true);
+    } else {
+      // if the above keys are being pressed, the user shouldn't be moving
+      player.setVelocity(0, 0);
+
+      player.anims.pause();
+    }
+  }
+
+  if (cursors.space.isDown && (this.physics.world.overlap(player, fishingZone)) && spacebarHeld === false) {
     spacebarHeld = true;
     console.log("Fishing!")
 
     if (player.state === "fishing") {
       // The player is currently fishing
+      if (pond.anims.getCurrentKey() === "pondBite") {
+        // there's a catchable fish!
+        // first, create a fish object
+        fish = this.physics.add.sprite(pond.getCenter().x, pond.getCenter().y, 'fishA', 4).setOrigin(0.5, 0.5).setScale(3).refreshBody();
+        // then animate it up to the top of the player's body
+        var tween = this.tweens.add({
+          targets: fish,
+          x: player.getTopCenter().x,
+          y: player.getTopCenter().y,
+          ease: 'Linear',
+          completeDelay: 1000,
+          onComplete: function () {
+            // POST new fish here
+            fish.destroy();
+            player.state = "normal";
+          }
+        });
+
+        // now we'll show the player celebrate
+        player.anims.play('caughtFish', true);
+
+        // we'll clear the pond's animation chain and reset everything
+        pond.anims.stop();
+        pond.anims.play('pondStill');
+      } else {
+        // just stop fishing
+        player.anims.play('sideways', true);
+
+        pond.anims.play('pondStill', true);
+
+        player.state = "normal";
+      }
 
     } else {
       // The player should begin fishing!
       player.anims.play('cast', true);
 
       pond.anims.play('pondFishing');
-      pond.anims.stopAfterDelay(Phaser.Math.Between(2000,4000));
 
       pond.anims.chain('pondBite');
+
+      pond.anims.stopAfterDelay(Phaser.Math.Between(2000,4000));
+
       pond.on('animationcomplete-pondBite', finishedFishing);
       pond.anims.chain('pondFishing');
 
@@ -162,13 +206,7 @@ function update ()
     }
 
   } else if (cursors.space.isUp) {
-    player.setVelocity(0, 0);
     spacebarHeld = false;
-    player.anims.pause();
-  } else {
-    // if the above keys are being pressed, the user shouldn't be moving
-    player.setVelocity(0, 0);
-
     player.anims.pause();
   }
 }
@@ -180,8 +218,7 @@ function finishedFishing (animation, frame, gameObject)
     pond.anims.stopAfterDelay(Phaser.Math.Between(2000,4000)); // random
 
     // add a new animation
-    pond.anims.chain('pondTug');
-    pond.on('animationcomplete-pondTug', finishedFishing);
+    pond.anims.chain('pondBite');
     pond.anims.chain('pondFishing');
 
   }
