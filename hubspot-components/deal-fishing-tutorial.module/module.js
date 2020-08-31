@@ -207,7 +207,6 @@ function update ()
 
   } else if (cursors.space.isUp) {
     spacebarHeld = false;
-    player.anims.pause();
   }
 }
 
