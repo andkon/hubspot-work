@@ -1,0 +1,12 @@
+{
+  "runtime": "nodejs12.x",
+  "version": "1.0",
+  "environment": {},
+  "secrets": [],
+  "endpoints": {
+    "deals": {
+      "method": "POST",
+      "file": "post-deals.js"
+    }
+  }
+}

@@ -168,9 +168,23 @@ function update ()
           ease: 'Linear',
           completeDelay: 1000,
           onComplete: function () {
-            // POST new fish here
             fish.destroy();
             player.state = "normal";
+
+            let data = {element: "barium"};
+
+            // POST new fish here
+            fetch("https://konoffcarnivalgames-8311725.hs-sites.com/_hcms/api/deals", {
+              method: "POST",
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ fish: Phaser.Math.Between(1, 100)})
+            }).then(res => {
+              return res.json()
+            }).then(data => {
+              console.log(data);
+            });
           }
         });
 
