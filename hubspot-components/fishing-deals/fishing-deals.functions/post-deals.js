@@ -5,12 +5,13 @@ var colors = ["White", "Yellow", "Blue", "Red", "Green", "Black", "Brown", "Azur
 
 exports.main = ({ accountId, body, params }, sendResponse) => {
   console.log('Your HubSpot account ID: %i', accountId);
-  console.log(body.fish_size);
+  console.log('Your fish size: ' + body.fish_size);
 
   var firstName = fishNames[Math.floor(Math.random() * fishNames.length)];
   var lastName = ("Mc" + colors[Math.floor(Math.random() * colors.length)]);
 
-  console.log("ENV hubapikey: " + process.env.hubapikey)
+  console.log("The API key: " + process.env.hubapikey);
+
   var options = {
     method: 'POST',
     url: 'https://api.hubapi.com/crm/v3/objects/contacts',
