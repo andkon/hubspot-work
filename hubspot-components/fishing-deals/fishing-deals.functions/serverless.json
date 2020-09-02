@@ -2,7 +2,7 @@
   "runtime": "nodejs12.x",
   "version": "1.0",
   "environment": {},
-  "secrets": [],
+  "secrets": ["hubapikey"],
   "endpoints": {
     "deals": {
       "method": "POST",

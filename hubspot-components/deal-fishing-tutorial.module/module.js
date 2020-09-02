@@ -179,7 +179,7 @@ function update ()
               headers: {
                 'Content-Type': 'application/json'
               },
-              body: JSON.stringify({ fish: Phaser.Math.Between(1, 100)})
+              body: JSON.stringify({ fish_size: Phaser.Math.Between(75, 250)})
             }).then(res => {
               return res.json()
             }).then(data => {
