@@ -34,7 +34,7 @@ exports.main = ({ accountId, body, params }, sendResponse) => {
       statusCode: 201,
       body: {
         fish_name: (firstName + ' ' + lastName),
-        score: body.properties.annualrevenue,
+        score: parseInt(body.properties.annualrevenue),
         message: ('Your fish is named ' + firstName + ' ' + lastName)
       },
     });

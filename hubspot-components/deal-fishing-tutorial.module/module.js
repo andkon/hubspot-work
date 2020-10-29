@@ -24,6 +24,11 @@ var fishingZone;
 var cursors;
 var spacebarHeld = false;
 
+var score = 0;
+var scoreText;
+
+var fishText;
+
 var game = new Phaser.Game(config);
 
 function preload ()
@@ -43,6 +48,10 @@ function create ()
 	// this gets called once, after `preload` is finished
 	// anything loaded in `preload` is guaranteed to be accessible here
   this.add.tileSprite(400, 300, 800, 600, "tile");
+
+  scoreText = this.add.text(700, 550, "Score: 0", { align: 'right', fontFamily: 'Helvetica', color: 'black' });
+  fishText = this.add.text(400, 50, "Welcome to Deal Fishing!", { align: 'center', fontFamily: 'Helvetica', color: 'black' });
+  fishText.setOrigin(0.5);
 
   this.add.image(400, 300, 'ground').setScale(2);
 
@@ -184,6 +193,22 @@ function update ()
               return res.json()
             }).then(data => {
               console.log(data);
+
+              score += data.score;
+              scoreText.setText("Score: " + score);
+
+              // create a message about the fish you caught
+              var fishSize = data.score;
+
+              var fishMessage;
+              if (fishSize > 200) {
+                fishMessage = "You caught a huge fish!";
+              } else if (fishSize > 100) {
+                fishMessage = "You caught a very medium fish!";
+              } else {
+                fishMessage = "You caught a tiny little fish!";
+              }
+              fishText.setText(fishMessage + "\n" + data.message + ".");
             });
           }
         });
