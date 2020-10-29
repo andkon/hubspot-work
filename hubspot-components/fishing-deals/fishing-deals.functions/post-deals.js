@@ -10,8 +10,6 @@ exports.main = ({ accountId, body, params }, sendResponse) => {
   var firstName = fishNames[Math.floor(Math.random() * fishNames.length)];
   var lastName = ("Mc" + colors[Math.floor(Math.random() * colors.length)]);
 
-  console.log("The API key: " + process.env.hubapikey);
-
   var options = {
     method: 'POST',
     url: 'https://api.hubapi.com/crm/v3/objects/contacts',

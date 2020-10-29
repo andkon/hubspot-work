@@ -174,7 +174,7 @@ function update ()
             let data = {element: "barium"};
 
             // POST new fish here
-            fetch("http://konoffcarnivalgames-8311725.hs-sites.com/_hcms/api/deals", {
+            fetch("//konoffcarnivalgames-8311725.hs-sites.com/_hcms/api/deals", {
               method: "POST",
               headers: {
                 'Content-Type': 'application/json'
